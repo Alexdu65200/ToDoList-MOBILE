@@ -1,0 +1,86 @@
+package com.tp_oliva.todolist.model.remoteDataSource;
+
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.tp_oliva.todolist.model.model.Note;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RemoteDb {
+    private DatabaseReference mDatabaseRef;
+
+    private List<Note> mNote;
+    private LiveData<List<Note>> mNotes;
+
+    public RemoteDb() {
+        this.mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+        mNote = new ArrayList<>();
+    }
+
+    public void insert(Note note) {
+        String noteId = String.valueOf(note.getId());
+        mDatabaseRef.child(noteId).setValue(note);
+    }
+
+    public void update(Note note) {
+        Log.e("@@@", "U push id:" + note.getId());
+        final String noteId = "" + note.getId();
+        mDatabaseRef.child("").child(noteId).setValue(note)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e("@@@", "Write was successful.");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("@@@", "Write failed!");
+                    }
+                });
+    }
+
+    public void delete(Note note) {
+        String noteId = String.valueOf(note.getId());
+        mDatabaseRef.child(noteId).removeValue();
+    }
+
+    public void deleteAllNotes() {
+        mDatabaseRef.setValue(null);
+    }
+
+    public LiveData<List<Note>> getAllNotes() {
+        mNotes = new MutableLiveData<>();
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mNote.clear();
+                for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
+                    Note note = noteSnapshot.getValue(Note.class);
+                    mNote.add(note);
+                }
+                ((MutableLiveData<List<Note>>) mNotes).setValue(mNote);
+                Log.e("@@@", "Reading data was successful.");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("@@@", databaseError.getMessage());
+            }
+        });
+
+        return mNotes;
+    }
+}

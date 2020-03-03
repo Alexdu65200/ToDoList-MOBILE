@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ToDoList-MOBILE.iml" filepath="$PROJECT_DIR$/ToDoList-MOBILE.iml" group="ToDoList-MOBILE" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="ToDoList-MOBILE/app" />
+      <module fileurl="file://$PROJECT_DIR$/newToDoList-master.iml" filepath="$PROJECT_DIR$/newToDoList-master.iml" group="newToDoList-master" />
+    </modules>
+  </component>
+</project>
