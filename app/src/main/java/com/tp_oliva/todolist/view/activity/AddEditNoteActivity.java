@@ -1,10 +1,12 @@
 package com.tp_oliva.todolist.view.activity;
 
 import android.content.Intent;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import java.util.Locale;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.NumberPicker;
@@ -46,8 +48,21 @@ public class AddEditNoteActivity extends AppCompatActivity {
         } else {
             setTitle("Ajouter une tâche");
         }
+
     }
 
+    public void getSpeechInput() {
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, 10);
+        } else {
+            Toast.makeText(this, "Votre appareil ne dispose pas de cette fonction", Toast.LENGTH_SHORT).show();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
